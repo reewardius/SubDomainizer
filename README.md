@@ -67,7 +67,7 @@ Short Form    | Long Form     | Description
 -c            | --cookie      | Cookies which needs to be sent with request.
 -h            | --help        | show the help message and exit.
 -cop          | --cloudop     | Give file name in which you need to store cloud services results.
--d            | --domain      | Give TLD (eg. for www.example.com you have to give example.com) to find subdomain for given TLD.
+-d            | --domains     | Give TLD (eg. for www.example.com you have to give example.com) to find subdomain for given TLD seperated by comma (no spaces b/w comma).
 -g            | --gitscan     | Needed if you want to get things via Github too.
 -gt           | --gittoken    | Github API token is needed, if want to scan (also needed -g also).
 -k            | --nossl       |  Use this to bypass the verification of SSL certificate.
