@@ -519,7 +519,6 @@ def custom_domains_regex(domains):
     prefix = '[a-zA-Z0-9][0-9a-zA-Z\-.]*\.'
     for domain in domains.split(','):
         _domains += prefix + domain + '|'
-    print(_domains[:-1])
     domainreg = re.compile(r'(' + _domains[:-1] + ')', re.IGNORECASE)
     return domainreg
 
