@@ -70,7 +70,8 @@ Short Form    | Long Form     | Description
 -d            | --domains     | Give TLD (eg. for www.example.com you have to give example.com) to find subdomain for given TLD seperated by comma (no spaces b/w comma).
 -g            | --gitscan     | Needed if you want to get things via Github too.
 -gt           | --gittoken    | Github API token is needed, if want to scan (also needed -g also).
--k            | --nossl       |  Use this to bypass the verification of SSL certificate.
+-gop	      | --gitsecretop | Saving secrets to a file found in github.
+-k            | --nossl       | Use this to bypass the verification of SSL certificate.
 -f            | --folder      | Root folder which contains files/folder.
 -san          | --subject_alt_name    |  Find Subject Alternative Names for all found subdomains, Options: 'all', 'same'.
 
@@ -117,6 +118,11 @@ python3 SubDomainizer.py -f /path/to/root/folder/having/files/and/folders/  -d e
 ```
 python3 SubDomainizer.py -u https://www.example -san all
 ```
+* Saving secrets to a file scan found in github:
+```
+python3 SubDomainizer.py -u https://www.example.com -o output.txt -gt <github_token> -g -gop filename_to_save
+```
+
 
 ## Difference in results (with cookies and without cookies on facebook.com):
 

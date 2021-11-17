@@ -39,7 +39,8 @@ colorama.init()
 parse = argparse.ArgumentParser()
 parse.add_argument('-c', '--cookie', help="Cookies which needs to be sent with request. User double quotes if have more than one.")
 parse.add_argument('-cop', '--cloudop', help="Enter the file name in which you want to save results of cloud services finding.")
-parse.add_argument('-sop', '--secretop', help="Enter the file name in which you want to save results of secrets found.") 
+parse.add_argument('-sop', '--secretop', help="Enter the file name in which you want to save results of secrets found.")
+parse.add_argument('-gop', '--gitsecretop', help="Enter the file name in which you want to save results of secrets found in github.") 
 parse.add_argument('-d', '--domains', help="Enter the top-level-domain(s) seperated with comma (no spaces after comma) to extract all the subdomain of those domains")
 parse.add_argument('-f', '--folder', help="Folder in which files needs to be scanned.")
 parse.add_argument('-g', '--gitscan', help="Give this option if you wants to search for subdomain from github", action='store_true')
@@ -60,6 +61,7 @@ isGit = args.gitscan
 isSSL = args.nossl
 folderName = args.folder
 is_san = args.subject_alt_name
+githubsc_out = args.gitsecretop
 
 jsLinkList = list()
 jsname = list()
@@ -69,6 +71,7 @@ secret_dict = dict()
 git_data = dict()
 cloudurlset = set()
 finallist = list()
+github_secrets = set()
 
 if args.cookie:
     heads = {"Cookie": args.cookie,
@@ -498,12 +501,16 @@ def getInfoFromData(item_url, item_values, cloudlist, p, regex, ipv4reg, url, pr
             cloudurlset.add(item)
 
     matches = p.finditer(str(item_values))
-    for matchNum, match in enumerate(matches):
+    for _, match in enumerate(matches):
         if entropy(match.group(2)) > 3.5:
             if item_url in secret_dict:
                 secret_dict[item_url].append(str(match.group()))
+                if githubsc_out and item_url.startswith("https://github.com"):
+                    github_secrets.add(str(match.group())) # adding github secrets explicitly to save in file
             else:
                 secret_dict[item_url] = [str(match.group())]
+                if githubsc_out and item_url.startswith("https://github.com"):
+                    github_secrets.add(str(match.group())) # adding github secrets explicitly
 
     # for subdomains
     for subdomain in regex.findall(str(item_values)):
@@ -658,6 +665,10 @@ def savesecretsresults():
             for secret in secretlst:
                 f.write(secret + ' | ' + location + '\n')
 
+def save_github_secrets():
+    with open(githubsc_out, 'w+') as f:
+        for secret in github_secrets:
+            f.write(secret + '\n')
 
 def printlogo():
     """
@@ -795,7 +806,6 @@ if __name__ == "__main__":
                     contentApiURLs = getUrlsFromData(gitToken, str(item))
                     gitThread.map(getGithubData, contentApiURLs)
                     gitContentThread = ThreadPool(200)
-
                     try:
                         gitContentThread.starmap(getInfoFromData,
                                                  zip(git_data.keys(), git_data.values(), repeat(compiledRegexCloud),
@@ -858,6 +868,15 @@ if __name__ == "__main__":
             for secret in set(secrets):
                 print(termcolor.colored(secret, color='green', attrs=['bold']),
                       termcolor.colored("| " + file_url, color='yellow', attrs=['bold']))
+    
+    if isGit and github_secrets:
+        print(termcolor.colored('_' * 60, color='white', attrs=['bold']))
+        print(termcolor.colored("\nWriting github secrets to the given file...", color='yellow', attrs=['bold']))
+        try:
+            save_github_secrets()
+            print(termcolor.colored("\nSaved", color='red', attrs=['bold']))
+        except:
+            print(termcolor.colored("\nError in saving the github secrets file...", color='red', attrs=['bold']))
 
     if is_san in ("same", "all") and url and not folderName:
         print(termcolor.colored('_' * 60, color='white', attrs=['bold']))
