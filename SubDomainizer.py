@@ -643,7 +643,7 @@ def savedata():
 
     print(termcolor.colored(
         "\nWriting all the subdomains to given file...\n", color='yellow', attrs=['bold']))
-    with open(args.output, 'w+') as f:
+    with open(args.output, 'a+') as f:
         for item in tldSorting(finalset):
             f.write(item + '\n')
     print(termcolor.colored("\nWriting Done..\n", color='yellow', attrs=['bold']))
@@ -653,7 +653,7 @@ def savecloudresults():
     """
     This function will save cloud URL's data into the given file.
     """
-    with open(cloudop, 'w+') as f:
+    with open(cloudop, 'a+') as f:
         for item in cloudurlset:
             f.write(item + '\n')
 
@@ -661,13 +661,13 @@ def savesecretsresults():
     """
     This function will save secret data into the given file.
     """
-    with open(secretop, 'w+') as f:
+    with open(secretop, 'a+') as f:
         for location, secretlst in secret_dict.items():
             for secret in secretlst:
                 f.write(secret + ' | ' + location + '\n')
 
 def save_github_secrets():
-    with open(githubsc_out, 'w+') as f:
+    with open(githubsc_out, 'a+') as f:
         for secret in github_secrets:
             f.write(secret + '\n')
 
